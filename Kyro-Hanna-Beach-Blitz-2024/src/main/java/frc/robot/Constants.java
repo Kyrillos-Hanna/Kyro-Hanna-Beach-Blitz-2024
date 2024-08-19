@@ -7,9 +7,14 @@ package frc.robot;
 /** Add your docs here. */
 public class Constants {
     public static class ToasterConstants {
-        public static final int toasterWheelMotor1ID = 1;
-        public static final int toasterWheelMotor2ID = 2;
-        public static final int toasterRollerMotorID = 3;
+        public static final int kWheelMotor1ID = 1;
+        public static final int kWheelMotor2ID = 2;
+        public static final int kRollerMotorID = 3;
+
+        public static final int kWheelMotorsStallLimit = 100;
+        public static final int kWheelMotorsFreeLimit = 100;
+        public static final int kRollerMotorStallLimit = 100;
+        public static final int kRollerMotorFreeLimit = 100;
     }
 
 }

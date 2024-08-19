@@ -7,20 +7,33 @@ package frc.robot.Subsystems;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.Command;
 import com.revrobotics.CANSparkMax;
-import com.revrobotics.CANSparkLowLevel.MotorType;
+import com.revrobotics.CANSparkLowLevel;
+import com.revrobotics.CANSparkBase;
 import frc.robot.Constants.ToasterConstants;
-import edu.wpi.first.wpilibj2.command.WaitCommand;
 
 public class Toaster extends SubsystemBase {
-  private CANSparkMax m_wheel1Motor = new CANSparkMax(ToasterConstants.toasterWheelMotor1ID, MotorType.kBrushless);
-  private CANSparkMax m_wheel2Motor = new CANSparkMax(ToasterConstants.toasterWheelMotor2ID, MotorType.kBrushless);
-  private CANSparkMax m_rollerMotor = new CANSparkMax(ToasterConstants.toasterRollerMotorID, MotorType.kBrushless);
-
-  private WaitCommand m_waitCommand;
+  private CANSparkMax m_wheel1Motor = new CANSparkMax(ToasterConstants.kWheelMotor1ID, CANSparkLowLevel.MotorType.kBrushless);
+  private CANSparkMax m_wheel2Motor = new CANSparkMax(ToasterConstants.kWheelMotor2ID, CANSparkLowLevel.MotorType.kBrushless);
+  private CANSparkMax m_rollerMotor = new CANSparkMax(ToasterConstants.kRollerMotorID, CANSparkLowLevel.MotorType.kBrushless);
   
   /** Creates a new Toaster. */
   public Toaster() {
-    m_wheel2Motor.follow(m_wheel1Motor, true);
+    configMotor(m_wheel1Motor, ToasterConstants.kWheelMotorsStallLimit, ToasterConstants.kWheelMotorsFreeLimit);
+    configMotor(m_wheel2Motor, ToasterConstants.kWheelMotorsStallLimit, ToasterConstants.kWheelMotorsFreeLimit, m_wheel1Motor);
+    configMotor(m_rollerMotor, ToasterConstants.kRollerMotorStallLimit, ToasterConstants.kRollerMotorFreeLimit);
+  }
+
+  private void configMotor(CANSparkMax motor, int stallLimit, int freelimit, CANSparkMax leader) {
+    configMotor(motor, stallLimit, freelimit);
+    motor.follow(leader);
+    motor.burnFlash();
+  }
+
+  private void configMotor(CANSparkMax motor, int stallLimit, int freeLimit) {
+    motor.restoreFactoryDefaults();
+    motor.setIdleMode(CANSparkBase.IdleMode.kCoast);
+    motor.setSmartCurrentLimit(stallLimit, freeLimit);
+    motor.burnFlash();
   }
 
   public void runWheelMotors(double speed) {
@@ -39,7 +52,16 @@ public class Toaster extends SubsystemBase {
   }
 
   public Command shoot(double speed, double delay) {
-    return this.run(() -> runWheelMotors(speed)).withTimeout(delay).andThen(this.run(() -> runRollerMotor(speed)));
+    return this.run(() -> runWheelMotors(speed))
+      .withTimeout(delay)
+      .andThen(this.run(() -> runRollerMotor(speed)));
+  }
+
+  public Command turnOffToaster() {
+    return this.run(() -> {
+      runWheelMotors(0);
+      runRollerMotor(0);
+    });
   }
 
   @Override
