@@ -17,4 +17,16 @@ public class Constants {
         public static final int kRollerMotorFreeLimit = 100;
     }
 
+    public static class JointConstants {
+        public static final int kMotor1ID = 4; //placeholder
+        public static final int kMotor2ID = 5; //placeholder
+
+        public static final int kMotor1StallLimit = 0; //placeholder
+        public static final int kMotor1FreeLimit = 0; //placeholder
+        public static final int kMotor2StallLimit = 0; //placeholder
+        public static final int kMotor2FreeLimit = 0; //placeholder
+
+        public static final int kGearRatio = 1; //placeholder
+    }
+
 }

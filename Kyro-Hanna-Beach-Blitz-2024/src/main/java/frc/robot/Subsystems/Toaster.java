@@ -18,20 +18,21 @@ public class Toaster extends SubsystemBase {
   
   /** Creates a new Toaster. */
   public Toaster() {
-    configMotor(m_wheel1Motor, ToasterConstants.kWheelMotorsStallLimit, ToasterConstants.kWheelMotorsFreeLimit);
-    configMotor(m_wheel2Motor, ToasterConstants.kWheelMotorsStallLimit, ToasterConstants.kWheelMotorsFreeLimit, m_wheel1Motor);
-    configMotor(m_rollerMotor, ToasterConstants.kRollerMotorStallLimit, ToasterConstants.kRollerMotorFreeLimit);
+    configMotor(m_wheel1Motor, ToasterConstants.kWheelMotorsStallLimit, ToasterConstants.kWheelMotorsFreeLimit, false);
+    configMotor(m_wheel2Motor, ToasterConstants.kWheelMotorsStallLimit, ToasterConstants.kWheelMotorsFreeLimit, m_wheel1Motor, true);
+    configMotor(m_rollerMotor, ToasterConstants.kRollerMotorStallLimit, ToasterConstants.kRollerMotorFreeLimit, false);
   }
 
-  private void configMotor(CANSparkMax motor, int stallLimit, int freelimit, CANSparkMax leader) {
-    configMotor(motor, stallLimit, freelimit);
+  private void configMotor(CANSparkMax motor, int stallLimit, int freelimit, CANSparkMax leader, boolean setInverted) {
+    configMotor(motor, stallLimit, freelimit, setInverted);
     motor.follow(leader);
     motor.burnFlash();
   }
 
-  private void configMotor(CANSparkMax motor, int stallLimit, int freeLimit) {
+  private void configMotor(CANSparkMax motor, int stallLimit, int freeLimit, boolean invert) {
     motor.restoreFactoryDefaults();
     motor.setIdleMode(CANSparkBase.IdleMode.kCoast);
+    motor.setInverted(invert);
     motor.setSmartCurrentLimit(stallLimit, freeLimit);
     motor.burnFlash();
   }
